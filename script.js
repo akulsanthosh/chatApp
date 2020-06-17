@@ -22,11 +22,11 @@ async function setup(id){
 
 // console.log(setup("akul"))
 
-async function sendmessage(con){
-    // document.getElementById("msgInput")
-    console.log("finally")
+async function sendmessage(){
+    let msg = document.getElementById("msginput").value;
+    console.log("finally");
     const message = await con.sendMessage({
-            text: "hi",
+            text: msg,
     });
 }
 
@@ -45,7 +45,7 @@ async function main(){
     update(event.message.user.id,event.message.text)
     });
 
-    document.getElementById("btn").addEventListener("click",await sendmessage(con))
+    document.getElementById("btn").addEventListener("click",sendmessage);
 }
 
 main()
