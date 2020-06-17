@@ -34,6 +34,7 @@ function update(name,msg){
     const message = `<li><img class="dp" src="https://getstream.io/random_svg/?name=`+name+`" alt=""><p class="message">`+msg+`</p></li>`;
     all = all + message;
     document.getElementById("msgs").innerHTML = all
+    autoScroll();
 }
 
 // sendmessage(con)
@@ -50,6 +51,10 @@ async function main(){
         }
     });
     document.getElementById("btn").addEventListener("click",sendmessage);
+    document.getElementById("shrug").addEventListener("click",() => {
+        document.getElementById("msginput").value = "¯\\_(ツ)_/¯";
+        sendmessage();
+    });
 }
 
 main()
