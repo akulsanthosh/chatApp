@@ -24,7 +24,7 @@ async function setup(id){
 
 async function sendmessage(){
     let msg = document.getElementById("msginput").value;
-    console.log("finally");
+    document.getElementById("msginput").value = "";
     const message = await con.sendMessage({
             text: msg,
     });
@@ -41,10 +41,14 @@ function update(name,msg){
 async function main(){
     const con = await setup("akul")
     con.on('message.new', event => {
-    console.log('received a new message', event.message.text);
-    update(event.message.user.id,event.message.text)
+    // console.log('received a new message', event.message);
+    update(event.message.user.name,event.message.text)
     });
-
+    document.getElementById("msginput").addEventListener("keydown", function (e) {
+        if (e.keyCode === 13) { 
+            sendmessage();
+        }
+    });
     document.getElementById("btn").addEventListener("click",sendmessage);
 }
 
