@@ -1,11 +1,14 @@
 // @ts-ignore
-const client = new StreamChat('t278amr6eqhe');
+const client = new StreamChat('t278amr6eqhe',{
+    timeout: 6000,
+});
 var all = ``
 
-async function setup(id){
+async function setup(id,name,user_id="test"){
     await client.setGuestUser({ 
         id: id,
-        name: 'akul'
+        name: name,
+        //image: '',
     });
     con = client.channel('messaging', 'trailheist');
     await con.create();
@@ -13,34 +16,38 @@ async function setup(id){
     return con
 };
 
-// setup("akul").then((con)=>{
-//     con.on('message.new', event => {
-//         console.log('received a new message', event.message.text);
-//         update(event.message.user.id,event.message.text)
-//     });
-// });
-
-// console.log(setup("akul"))
-
 async function sendmessage(){
     let msg = document.getElementById("msginput").value;
+    if(msg.trim() === "" ){
+        return;
+    }
     document.getElementById("msginput").value = "";
-    const message = await con.sendMessage({
-            text: msg,
-    });
+    try{
+        const message = await con.sendMessage({ text: msg,});
+    }
+    catch{
+        const message = await con.sendMessage({ text: msg,}).catch((err)=> alert("Slow Connection"));
+    }
 }
 
 function update(name,msg){
-    const message = `<li><img class="dp" src="https://getstream.io/random_svg/?name=`+name+`" alt=""><p class="message">`+msg+`</p></li>`;
+    const message = `<li><img class="dp" src="https://getstream.io/random_svg/?name=` + name + `" alt=""><p class="message">`+msg+`</p></li>`;
     all = all + message;
     document.getElementById("msgs").innerHTML = all
     autoScroll();
 }
 
-// sendmessage(con)
-
 async function main(){
-    const con = await setup("akul")
+    let userdata = await fetch('/api/v1/current/user').then((res)=> res.json()).catch((err)=> alert('Error: Try Reloading page'));
+    let name = userdata.current_username.toString();
+    let id = userdata.userid.toString();
+    try{
+        const con = await setup(id,name);
+    }
+    catch{
+        const con = await setup(id,name).catch((err)=> alert("Slow connection, Try reloading"));
+    }
+
     con.on('message.new', event => {
     // console.log('received a new message', event.message);
     update(event.message.user.name,event.message.text)
