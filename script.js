@@ -11,7 +11,6 @@ async function setup(id,name,user_id="test"){
         //image: '',
     });
     con = client.channel('messaging', 'trailheist');
-    await con.create();
     const state = await con.watch();
     return con
 };
@@ -30,7 +29,7 @@ async function sendmessage(){
     }
 }
 
-function update(name,msg){
+function update(name,msg,date="temp"){
     const message = `<li><img class="dp" src="https://getstream.io/random_svg/?name=` + name + `" alt=""><p class="message">`+msg+`</p></li>`;
     all = all + message;
     document.getElementById("msgs").innerHTML = all
@@ -47,10 +46,12 @@ async function main(){
     catch{
         const con = await setup(id,name).catch((err)=> alert("Slow connection, Try reloading"));
     }
-
+     for(i=0;i<con.state.messages.length;i++){
+         update(con.state.messages[i].user.name,con.state.messages[i].text,con.state.messages[i].created_at);
+     }
     con.on('message.new', event => {
     // console.log('received a new message', event.message);
-    update(event.message.user.name,event.message.text)
+    update(event.message.user.name,event.message.text,event.message.created_at)
     });
     document.getElementById("msginput").addEventListener("keydown", function (e) {
         if (e.keyCode === 13) { 
